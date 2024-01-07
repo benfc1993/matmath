@@ -1,5 +1,5 @@
-import { matrix, transpose } from '.'
-import { Matrix } from './matrix'
+import { Matrix, matrix } from './matrix'
+import { transpose } from './transpose'
 
 export function dot(matA: Matrix, matB: Matrix): Matrix {
     let dataA = matA.dimentions[0] >= matB.dimentions[1] ? matA.data : matB.data
