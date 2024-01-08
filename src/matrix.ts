@@ -1,23 +1,28 @@
-import { cross } from './cross'
+import { multiply } from './multiply'
 import { dot } from './dot'
 import { scale } from './scale'
 import { transposeMat } from './transpose'
+import { MatMathError } from './MatMathError'
 
 export interface Matrix {
     transpose(): Matrix
     data: number[][]
     dimentions: [number, number]
+    identity: number[][]
     scale: (scalar: number) => Matrix
     dot: (otherMatrix: Matrix) => Matrix
-    cross: (otherMatrix: Matrix) => Matrix
-    toString: () => number[][]
+    mult: (otherMatrix: Matrix) => Matrix
+    toString: () => string
+    valueOf: () => string
 }
 
 export function matrix(data: number[][]): Matrix {
+    if (data.length === 0)
+        throw new MatMathError('matrix must have size greater than 0')
     const dim1 = data[0].length
     for (const row of data) {
         if (row.length !== dim1)
-            throw new Error('MatMath: all rows must be the same size')
+            throw new MatMathError('All rows must be the same size')
     }
     return {
         data,
@@ -25,20 +30,28 @@ export function matrix(data: number[][]): Matrix {
             const dims: [number, number] = [data.length, data[0].length]
             return dims
         },
+        get identity() {
+            return Array.from(Array(this.dimentions[0]), () =>
+                new Array(this.dimentions[1]).fill(0)
+            ).map((row: number[], i) => row.map((_, j) => (i === j ? 1 : 0)))
+        },
         scale(scalar: number) {
             return scale(this, scalar)
         },
         dot(otherMatrix: Matrix) {
             return dot(this, otherMatrix)
         },
-        cross(otherMatrix: Matrix) {
-            return cross(this, otherMatrix)
-        },
-        toString() {
-            return data
+        mult(otherMatrix: Matrix) {
+            return multiply(this, otherMatrix)
         },
         transpose() {
             return transposeMat(this)
+        },
+        toString() {
+            return JSON.stringify(data)
+        },
+        valueOf() {
+            return JSON.stringify(data)
         }
     }
 }

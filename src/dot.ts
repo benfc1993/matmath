@@ -1,9 +1,10 @@
+import { MatMathError } from './MatMathError'
 import { Matrix, matrix } from './matrix'
 import { transpose } from './transpose'
 
 export function dot(matA: Matrix, matB: Matrix): Matrix {
-    let dataA = matA.dimentions[0] >= matB.dimentions[1] ? matA.data : matB.data
-    let dataB = matA.dimentions[0] >= matB.dimentions[1] ? matB.data : matA.data
+    let dataA = matA.dimentions[0] <= matB.dimentions[0] ? matA.data : matB.data
+    let dataB = matA.dimentions[0] <= matB.dimentions[0] ? matB.data : matA.data
 
     const matARows = dataA.length
     const matACols = dataA[0].length
@@ -16,7 +17,9 @@ export function dot(matA: Matrix, matB: Matrix): Matrix {
     const isValidSizes = areSameOrientation || areTranspositions
 
     if (!isValidSizes) {
-        throw Error('matrices must be same size')
+        throw new MatMathError(
+            'matA and matB must have equivalent rows and cols'
+        )
     }
 
     if (areTranspositions) {
